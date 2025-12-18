@@ -68,6 +68,22 @@ def input_email():
         return email
 
 
+def find_contact_indices(contacts, query):
+    matches = []
+    for i in range(len(contacts)):
+        parts = contacts[i].split("|")
+        if len(parts) != 3:
+            continue
+
+        name = parts[0]
+        phone = parts[1]
+
+        if query.lower() == name.lower() or query == phone:
+            matches.append(i)
+
+    return matches
+
+
 def add_contact(contacts):
     print("\n➕ Добавление контакта")
     name = input_not_empty("Введите имя: ")
@@ -114,17 +130,7 @@ def delete_contact(contacts):
         return
 
     query = input_not_empty("Введите имя или телефон контакта для удаления: ")
-
-    matches = []
-    for i in range(len(contacts)):
-        parts = contacts[i].split("|")
-        if len(parts) != 3:
-            continue
-        name = parts[0]
-        phone = parts[1]
-
-        if query.lower() == name.lower() or query == phone:
-            matches.append(i)
+    matches = find_contact_indices(contacts, query)
 
     if len(matches) == 0:
         print("❌ Контакт не найден.")
@@ -153,17 +159,7 @@ def update_contact(contacts):
         return
 
     query = input_not_empty("Введите имя или телефон контакта для обновления: ")
-
-    matches = []
-    for i in range(len(contacts)):
-        parts = contacts[i].split("|")
-        if len(parts) != 3:
-            continue
-        name = parts[0]
-        phone = parts[1]
-
-        if query.lower() == name.lower() or query == phone:
-            matches.append(i)
+    matches = find_contact_indices(contacts, query)
 
     if len(matches) == 0:
         print("❌ Контакт не найден.")
@@ -203,7 +199,6 @@ def view_contacts(contacts):
         print("📭 Контактов пока нет.")
         return
 
-    
     sorted_contacts = sorted(contacts)
 
     print("\n📒 Все контакты (А-Я):")
@@ -213,7 +208,7 @@ def view_contacts(contacts):
 
 def main():
     while True:
-        contacts = load_contacts()  
+        contacts = load_contacts()
 
         show_menu()
         choice = input("Ваш выбор: ").strip()
